@@ -1,0 +1,42 @@
+{
+  "schema": "super-battles/map@1",
+  "name": "The Terraces",
+  "width": 11,
+  "height": 9,
+  "description": "Three relays. Two squads. One common ground.",
+  "blocked": [
+    [3, 1],
+    [4, 1],
+    [6, 1],
+    [7, 1],
+    [3, 7],
+    [4, 7],
+    [6, 7],
+    [7, 7],
+    [5, 3],
+    [5, 5]
+  ],
+  "cover": [
+    [3, 3],
+    [3, 5],
+    [7, 3],
+    [7, 5],
+    [1, 4],
+    [9, 4]
+  ],
+  "objectives": [
+    [3, 4],
+    [5, 4],
+    [7, 4]
+  ],
+  "spawns": [
+    [
+      [1, 2],
+      [1, 6]
+    ],
+    [
+      [9, 2],
+      [9, 6]
+    ]
+  ]
+}

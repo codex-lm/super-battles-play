@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#eceae1" />
+    <title>Super Battles — Your heroes. Your tactics.</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <!-- Copy is English by default; data-i18n* attributes name keys in src/i18n/*.js. -->
+  <body>
+    <header class="masthead">
+      <a
+        href="./index.html"
+        class="brand"
+        aria-label="Super Battles, home"
+        data-i18n-attr="aria-label:brand.home"
+        ><span class="brand-symbol">✳</span
+        ><span>SUPER<br />BATTLES<span class="brand-dot">.</span></span></a
+      >
+      <nav aria-label="Main navigation" data-i18n-attr="aria-label:nav.main">
+        <button class="nav-active" id="play-nav" data-i18n="nav.play">Battlefield</button
+        ><button id="workshop-nav">
+          <span data-i18n="nav.workshop">Workshop</span> <span>↗</span></button
+        ><button id="guide-nav" data-i18n="nav.guide">How to play</button>
+      </nav>
+      <select
+        id="language"
+        aria-label="Interface language"
+        data-i18n-attr="aria-label:language.label"
+        translate="no"
+      >
+        <option value="en">EN</option>
+        <option value="fr">FR</option></select
+      ><span class="edition"
+        ><i></i> <span data-i18n="edition.label">STANDALONE EDITION</span> <b>01</b></span
+      >
+    </header>
+    <main>
+      <section class="intro">
+        <div>
+          <p class="eyebrow" data-i18n="intro.eyebrow">YOUR HEROES. YOUR NEXT CHAPTER.</p>
+          <h1 data-i18n-html="intro.title">Your heroes.<br /><em>Your tactics.</em></h1>
+        </div>
+        <div class="intro-right">
+          <p data-i18n-html="intro.lead">
+            Prepare your squad.<br />Give the orders. Let your powers do the talking.
+          </p>
+          <div class="mode-picker">
+            <label for="mode" data-i18n="mode.label">MATCH</label
+            ><select id="mode">
+              <option value="solo" data-i18n="mode.solo">Solo · against the automaton</option>
+              <option value="local" data-i18n="mode.local">Two players · shared screen</option>
+              <option value="lob7" data-i18n="mode.lob7">Two players · LOB7 room</option>
+            </select>
+          </div>
+        </div>
+      </section>
+      <section class="game-shell" aria-label="Tactical match" data-i18n-attr="aria-label:game.aria">
+        <div class="matchbar">
+          <div>
+            <span class="live-dot"></span><b id="map-name">The Terraces</b
+            ><span class="map-type" data-i18n="map.type">SKIRMISH · 2 VS 2</span>
+          </div>
+          <div class="scoreboard" aria-live="polite">
+            <span class="team-a"
+              ><span data-i18n="team.0" data-i18n-case="upper">AZURE</span>
+              <b id="score-a">0</b></span
+            ><span class="score-target">/ 8</span
+            ><span class="team-b"
+              ><b id="score-b">0</b>
+              <span data-i18n="team.1" data-i18n-case="upper">CORAL</span></span
+            >
+          </div>
+          <button id="restart" class="text-button" data-i18n="match.restart">↻ New match</button>
+        </div>
+        <div class="game-grid">
+          <aside class="roster-panel">
+            <div class="panel-kicker" data-i18n="panel.squad">01 / YOUR SQUAD</div>
+            <div class="team-tabs">
+              <button id="team-a-tab" class="active" data-i18n="team.0">Azure</button
+              ><button id="team-b-tab">
+                <span data-i18n="team.1">Coral</span> <span id="bot-tag">AUTO</span>
+              </button>
+            </div>
+            <div id="roster"></div>
+            <button class="import-card" id="import-hero">
+              <span>+</span> <span data-i18n="squad.import">Bring a character</span>
+              <small data-i18n="squad.importNote">Your sheet. Your story.</small>
+            </button>
+            <div class="win-note">
+              <span>◎</span>
+              <p>
+                <b data-i18n="win.title">Hold the relays.</b><br /><span data-i18n="win.body"
+                  >8 points or defeat the other squad. 12 rounds maximum.</span
+                >
+              </p>
+            </div>
+          </aside>
+          <div class="arena-wrap">
+            <div class="arena-heading">
+              <span id="round-label">ROUND 01</span><span id="phase-label">PLANNING PHASE</span>
+            </div>
+            <div
+              id="arena"
+              role="img"
+              aria-label="3D tactical battlefield. Select a hero, then click a tile to set their destination."
+              data-i18n-attr="aria-label:arena.aria"
+            ></div>
+            <div class="arena-foot">
+              <span
+                ><i class="legend-relay"></i>
+                <span data-i18n="arena.legend.relay">RELAY</span></span
+              ><span
+                ><i class="legend-cover"></i>
+                <span data-i18n="arena.legend.cover">COVER</span></span
+              ><button
+                id="rotate-view"
+                aria-label="Rotate the view"
+                data-i18n="arena.rotate"
+                data-i18n-attr="aria-label:arena.rotateAria"
+              >
+                ↺ Rotate</button
+              ><button id="reset-view" data-i18n="arena.reset">Reset view</button>
+            </div>
+            <div id="banner" role="status" hidden></div>
+          </div>
+          <aside class="orders-panel">
+            <div class="panel-kicker" data-i18n="panel.orders">02 / YOUR ORDERS</div>
+            <div id="selected-header"></div>
+            <button id="preview-power" class="power-preview" data-i18n="orders.preview">
+              ✦ Preview power</button
+            ><label class="field-label" for="equipment" data-i18n="orders.equipment"
+              >EQUIPMENT</label
+            ><select id="equipment"></select>
+            <p id="equipment-note" class="field-note"></p>
+            <div class="field-label" data-i18n="orders.tactic">TACTICAL PRIORITY</div>
+            <div id="tactics"></div>
+            <label class="field-label" for="target" data-i18n="orders.target">TARGET PRIORITY</label
+            ><select id="target">
+              <option value="nearest" data-i18n="orders.target.nearest">Nearest</option>
+              <option value="weakest" data-i18n="orders.target.weakest">Weakest</option>
+            </select>
+            <div class="destination">
+              <span id="destination-label">No fixed destination</span
+              ><button
+                id="clear-waypoint"
+                aria-label="Clear destination"
+                data-i18n-attr="aria-label:orders.destination.clear"
+              >
+                ×
+              </button>
+            </div>
+            <p class="field-note" data-i18n="orders.destination.hint">
+              Click a tile on the board to set a destination.
+            </p>
+            <div class="hero-tools">
+              <button id="sheet-button">
+                <span data-i18n="orders.sheet">Character sheet</span> ↗</button
+              ><button id="mini-button">
+                <span data-i18n="orders.miniature">Miniature</span> ↗
+              </button>
+            </div>
+          </aside>
+        </div>
+        <div class="experience-bar">
+          <span class="sound-mark" aria-hidden="true">♫</span
+          ><button id="sound-toggle" aria-pressed="true">Sound on</button
+          ><button id="music-toggle" aria-pressed="false">Music off</button
+          ><label for="audio-volume" data-i18n="audio.volume">Volume</label
+          ><input id="audio-volume" type="range" min="0" max="100" value="50" /><span
+            class="audio-note"
+            >Sound starts with your first action.</span
+          >
+        </div>
+        <div class="turnbar">
+          <div>
+            <span class="panel-kicker" data-i18n="panel.turn">03 / MAKE YOUR MOVE</span>
+            <p id="turn-hint">Your orders are ready. Watch them unfold.</p>
+          </div>
+          <div class="turn-actions">
+            <button id="replay" class="secondary" data-i18n="turn.replay" disabled>↺ Replay</button
+            ><button id="resolve" class="primary">
+              <span id="resolve-label">Resolve round</span> <span>→</span>
+            </button>
+          </div>
+        </div>
+      </section>
+      <section class="below-game">
+        <div class="journal">
+          <div class="section-heading">
+            <h2 data-i18n="journal.title">The battle log</h2>
+            <span id="journal-round">WAITING FOR THE FIRST ROUND</span>
+          </div>
+          <div id="journal">
+            <p class="empty-journal">Every story begins with a decision.</p>
+          </div>
+        </div>
+        <div class="independent-note">
+          <span>✳</span>
+          <h2 data-i18n-html="open.title">A playground open<br />to your ideas.</h2>
+          <p data-i18n="open.body">
+            Characters and a battlefield included. Your creations welcome. No account needed for
+            solo or shared-screen play.
+          </p>
+          <button id="map-workshop" class="text-button">
+            <span data-i18n="open.maps">Import or export a battlefield</span> ↗
+          </button>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <span data-i18n="footer.version">SUPER BATTLES · PROTOTYPE 0.1</span
+      ><span data-i18n="footer.tagline">An independent game. Stories worth sharing.</span
+      ><button id="export-session"><span data-i18n="footer.export">Export match</span> ↓</button
+      ><button id="import-session"><span data-i18n="footer.import">Restore match</span> ↑</button>
+    </footer>
+    <dialog id="modal">
+      <div class="modal-head">
+        <span class="eyebrow" id="modal-kicker">WORKSHOP</span
+        ><button id="close-modal" aria-label="Close" data-i18n-attr="aria-label:modal.close">
+          ×
+        </button>
+      </div>
+      <div id="modal-content"></div>
+    </dialog>
+    <div id="toast" role="status" hidden></div>
+    <input id="file-input" type="file" hidden />
+    <script src="./lob7-rooms.js" defer></script>
+    <script src="./app.js" defer></script>
+  </body>
+</html>

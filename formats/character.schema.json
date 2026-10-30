@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Super Battles character 1",
+  "type": "object",
+  "required": ["schema", "name", "combat"],
+  "properties": {
+    "schema": {
+      "const": "super-battles/character@1"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 48
+    },
+    "id": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "role": {
+      "type": "string",
+      "maxLength": 32
+    },
+    "tagline": {
+      "type": "string",
+      "maxLength": 240
+    },
+    "color": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "model": {
+      "enum": ["bastion", "volta", "suture", "sillage"]
+    },
+    "sheet": {
+      "type": "object",
+      "description": "Original attributes, skills, powers, gear, narrative and unrecognized fields are preserved."
+    },
+    "sourceText": {
+      "type": "string",
+      "description": "Original imported sheet, preserved verbatim."
+    },
+    "combat": {
+      "type": "object",
+      "required": ["hp", "power", "range", "move", "armor", "skill"],
+      "properties": {
+        "hp": {
+          "type": "integer",
+          "minimum": 8,
+          "maximum": 40
+        },
+        "power": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "range": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "move": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "armor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "skill": {
+          "enum": ["shield", "arc", "heal", "dash"]
+        },
+        "die": {
+          "type": "integer",
+          "enum": [4, 6, 8, 10, 12],
+          "default": 8
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

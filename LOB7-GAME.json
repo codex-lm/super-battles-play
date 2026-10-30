@@ -1,0 +1,32 @@
+{
+  "title": "Super Battles",
+  "description": "A tactical tabletop auto-battler for the browser. Equip four original superheroes, give each one a priority and a destination, then watch the round resolve with dice, cover, force fields, healing and speed. Hold the relays or defeat the other squad. Solo against the automaton, two players on one screen, or two players in a LOB7 room. Bring your own character sheet, battlefield or 3D miniature. English and French.",
+  "entrypoint": "index.html",
+  "license": "MIT",
+  "assetsLicense": "Code: MIT (LICENSE). Miniatures, power effects, portraits, sound effects and music: CC BY 4.0 (ASSETS-LICENSE), with the credits listed there.",
+  "controls": [
+    "Select a hero, choose equipment before round one, then a tactical priority and target.",
+    "Click a tile on the 3D board to set a destination; drag to rotate the view.",
+    "Resolve round plays the turn; Replay shows it again. EN/FR selector at the top."
+  ],
+  "genre": [
+    "Strategy",
+    "Tactics"
+  ],
+  "themes": [
+    "Superheroes",
+    "Tabletop",
+    "Auto-battler"
+  ],
+  "credits": [
+    "Nilo (Codex agent) — original game, rules, code, audio prompts and effect animation",
+    "Kimi K3.1 Pro via Kimi Code CLI — miniature designs and power-effect geometry (procedural Blender)",
+    "ElevenLabs SFX v3 — power sound effects",
+    "Suno V6-MINI — “Relay at Dawn” music",
+    "Claude (Anthropic) — localization architecture and code refactor"
+  ],
+  "multiplayer": {
+    "mode": "room",
+    "maxPlayers": 2
+  }
+}

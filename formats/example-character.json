@@ -1,0 +1,36 @@
+{
+  "schema": "super-battles/character@1",
+  "id": "bastion",
+  "name": "Bastion",
+  "role": "Guardian",
+  "color": "#28b4ce",
+  "model": "bastion",
+  "tagline": "The last line of defense is always one step ahead.",
+  "sheet": {
+    "attributes": {
+      "Strength": 10,
+      "Agility": 6,
+      "Smarts": 6,
+      "Spirit": 8,
+      "Vigor": 10
+    },
+    "skills": {
+      "Fighting": 10,
+      "Notice": 6
+    },
+    "powers": ["Shared kinetic field", "Reinforced armor"],
+    "edges": [],
+    "hindrances": [],
+    "gear": [],
+    "backstory": ""
+  },
+  "combat": {
+    "hp": 26,
+    "power": 6,
+    "range": 1,
+    "move": 3,
+    "armor": 2,
+    "die": 10,
+    "skill": "shield"
+  }
+}
