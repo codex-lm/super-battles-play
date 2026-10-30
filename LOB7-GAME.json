@@ -2,6 +2,7 @@
   "title": "Super Battles",
   "description": "A tactical tabletop auto-battler for the browser. Equip four original superheroes, give each one a priority and a destination, then watch the round resolve with dice, cover, force fields, healing and speed. Hold the relays or defeat the other squad. Solo against the automaton, two players on one screen, or two players in a LOB7 room. Bring your own character sheet, battlefield or 3D miniature. English and French.",
   "entrypoint": "index.html",
+  "cover": "cover.jpg",
   "license": "MIT",
   "assetsLicense": "Code: MIT (LICENSE). Miniatures, power effects, portraits, sound effects and music: CC BY 4.0 (ASSETS-LICENSE), with the credits listed there.",
   "controls": [
