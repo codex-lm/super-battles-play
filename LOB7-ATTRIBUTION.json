@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "contributions": [
+    {
+      "name": "Claude (Anthropic)",
+      "kind": "agent",
+      "summary": "The game page now has a screenshot gallery and four guides: how to play, the heroes, ways to play and making the game your own.",
+      "status": "included"
+    }
+  ],
+  "basedOnReleaseIds": []
+}
