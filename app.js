@@ -63,13 +63,30 @@
       tagline: "Already elsewhere. Already ahead.",
       sheet: sheet(8, 12, 6, 8, 6, { Fighting: 10, Stealth: 10 }, ["Super speed", "Resonant blade"]),
       combat: { hp: 18, power: 6, range: 2, move: 5, armor: 0, die: 10, skill: "dash" }
+    },
+    // Kept after the four starters: HEROES[0..3] and the default squads are unchanged.
+    {
+      schema: "super-battles/character@1",
+      id: "killcam",
+      name: "Killcam",
+      role: "Interceptor",
+      color: "#c43d6a",
+      model: "killcam",
+      tagline: "Threat assessed. Civilians protected.",
+      sheet: sheet(8, 10, 6, 8, 6, { Fighting: 12, Athletics: 8 }, [
+        "Twin molecular swords",
+        "First strike",
+        "Sonic speed"
+      ]),
+      combat: { hp: 18, power: 6, range: 1, move: 4, armor: 2, die: 12, skill: "intercept" }
     }
   ];
   var POWER_RULES = {
     shield: { source: "Force field \xB7 Area Effect \xB7 Selective" },
     arc: { source: "Ranged attack \xB7 Armor Piercing" },
     heal: { source: "Healing" },
-    dash: { source: "Speed" }
+    dash: { source: "Speed" },
+    intercept: { source: "First Strike \xB7 Melee attack" }
   };
   var SKILLS = Object.keys(POWER_RULES);
   var DICE = [4, 6, 8, 10, 12];
@@ -122,6 +139,8 @@
     support: { icon: "\u2727" }
   };
   var TARGETS = ["nearest", "weakest"];
+  var ACTIONS = ["auto", "attack", "guard", "heal"];
+  var MOVEMENT = ["auto", "hold"];
   var EQUIPMENT = {
     balanced: { modifiers: {} },
     armor: { modifiers: { hp: 5, move: -1 } },
@@ -174,6 +193,34 @@
     "arena.reset": "Reset view",
     "arena.webgl": "3D rendering requires WebGL. Enable browser graphics acceleration, then reload the page.",
     "orders.preview": "\u2726 Preview power",
+    "orders.action.label": "ACTION THIS ROUND",
+    "orders.action.auto": "Automatic",
+    "orders.action.attack": "Attack",
+    "orders.action.guard": "Guard",
+    "orders.action.heal": "Heal",
+    "orders.focus.label": "EXACT TARGET",
+    "orders.focus.auto": "Choose a valid target",
+    "orders.movement.label": "MOVEMENT",
+    "orders.movement.auto": "Move toward the plan",
+    "orders.movement.hold": "Hold position",
+    "orders.advanced": "Autopilot & equipment",
+    "orders.plan.title": "YOUR PLAN",
+    "orders.plan.move": "Move {count}/{max} tiles \xB7 End at {x}, {y}.",
+    "orders.plan.attack": "Attack {target}.",
+    "orders.plan.heal": "Heal {target}.",
+    "orders.plan.guard": "Guard: reduce damage by 2.",
+    "orders.plan.intercepted": "Ends next to {names}: may be intercepted before acting.",
+    "orders.plan.down": "This hero is out of action.",
+    "orders.plan.caveat": "Preview with current positions. Earlier actions may change it. Orders stay until changed.",
+    "orders.reason.noTarget": "No enemy can be attacked from there.",
+    "orders.reason.noPatient": "No ally needs healing.",
+    "orders.reason.range": "The chosen target is out of range.",
+    "orders.reason.blocked": "Terrain blocks the line of sight.",
+    "orders.reason.targetDown": "The chosen target is out of action.",
+    "orders.reason.fullHealth": "The chosen ally is already at full endurance.",
+    "orders.reason.cooldown": "Healing is still recharging.",
+    "error.healOrder": "Only a hero with repair nanites can receive a Heal order.",
+    "error.orderTarget": "Choose an enemy to attack or an ally to heal.",
     "orders.equipment": "EQUIPMENT",
     "orders.tactic": "TACTICAL PRIORITY",
     "orders.target": "TARGET PRIORITY",
@@ -182,7 +229,7 @@
     "orders.destination.none": "No fixed destination",
     "orders.destination.set": "Destination: {x} \xB7 {y}",
     "orders.destination.clear": "Clear destination",
-    "orders.destination.hint": "Click a tile on the board to set a destination.",
+    "orders.destination.hint": "Click a tile to set a destination. Click an enemy to aim.",
     "orders.sheet": "Character sheet",
     "orders.miniature": "Miniature",
     "audio.sound.on": "Sound on",
@@ -196,7 +243,7 @@
     "audio.error.effects": "Some sound effects are unavailable. The game remains playable.",
     "audio.error.blocked": "The browser blocked audio. Use the Sound button to try again.",
     "audio.error.music": "Music is unavailable. Sound effects remain available.",
-    "turn.hint.ready": "Your orders are ready. Watch them unfold.",
+    "turn.hint.ready": "Choose each hero\u2019s destination, action and target. Then resolve the round.",
     "turn.hint.busy": "The heroes are carrying out their orders\u2026",
     "turn.hint.over": "The story continues. A new squad, a new strategy?",
     "turn.hint.room": "You command {team}. Lock in when ready.",
@@ -219,7 +266,7 @@
     "open.title": "A playground open<br>to your ideas.",
     "open.body": "Characters and a battlefield included. Your creations welcome. No account needed for solo or shared-screen play.",
     "open.maps": "Import or export a battlefield",
-    "footer.version": "SUPER BATTLES \xB7 PROTOTYPE 0.1",
+    "footer.version": "SUPER BATTLES \xB7 PROTOTYPE 0.2",
     "footer.tagline": "An independent game. Stories worth sharing.",
     "footer.export": "Export match",
     "footer.import": "Restore match",
@@ -254,6 +301,8 @@
     "hero.suture.tagline": "No one gets left behind.",
     "hero.sillage.role": "Scout",
     "hero.sillage.tagline": "Already elsewhere. Already ahead.",
+    "hero.killcam.role": "Interceptor",
+    "hero.killcam.tagline": "Threat assessed. Civilians protected.",
     "hero.imported.role": "Imported hero",
     "hero.imported.tagline": "A new story enters the scene.",
     "hero.adapt.role": "Choose a profile",
@@ -268,6 +317,8 @@
     "power.heal.description": "One action, range 4 with line of sight: restore 4 endurance, or 6 on a great success. One attempt every two rounds. Defeated heroes cannot return.",
     "power.dash.name": "Super speed",
     "power.dash.description": "After moving at least 2 tiles, attacks against this hero need +1 to hit until the end of the round. Obstacles still block movement.",
+    "power.intercept.name": "Intercept",
+    "power.intercept.description": "Once per round, a free melee attack on an enemy that ends its move next to this hero after starting farther away. It comes before that enemy acts and does not use this hero\u2019s action. Unavailable while shaken.",
     "trapping.shield.name": "Kinetic field",
     "trapping.shield.detail": "Cyan arches, shockwave and magnetic resonance.",
     "trapping.arc.name": "Electricity",
@@ -276,6 +327,8 @@
     "trapping.heal.detail": "Mint particle spirals and a crystalline chime.",
     "trapping.dash.name": "Super speed",
     "trapping.dash.detail": "Coral ribbons, afterimages and a rushing whoosh.",
+    "trapping.intercept.name": "Molecular blades",
+    "trapping.intercept.detail": "A crimson cross-slash of twin blades and an ultrasonic ring.",
     "tactic.objective.label": "Hold the relays",
     "tactic.objective.description": "Move to an available relay, then defend the position.",
     "tactic.assault.label": "Take the initiative",
@@ -297,6 +350,8 @@
     "log.heal": "{name} heals {target}: +{amount} endurance (roll {total}, target {threshold}).",
     "log.healMiss": "{name}\u2019s healing fails (roll {total}, target {threshold}).",
     "log.miss": "{name} misses {target} (roll {total}, target {threshold}).",
+    "log.interceptMiss": "{name} intercepts {target} but misses (roll {total}, target {threshold}).",
+    "log.interceptHit": "{name} intercepts {target}: \u2212{amount} (roll {total}, target {threshold}; power {power}+{bonus}, armor {armor}, field {field}, guard {guard}).",
     "log.hit": "{name} hits {target}: \u2212{amount} (roll {total}, target {threshold}; power {power}+{bonus}, armor {armor}, field {field}, guard {guard}).",
     "log.shaken": "{name} is shaken: field interrupted, next roll \u22122.",
     "log.down": "{name} is out of action.",
@@ -351,7 +406,7 @@
     "maps.reset": "Original battlefield",
     "guide.title": "Plan. Watch. Adapt.",
     "guide.intro": "<strong>Two squads, three relays, and heroes carrying out your orders.</strong> Jump straight in with the included characters.",
-    "guide.steps": "<li><strong>Prepare your squad.</strong> Select a character, choose their equipment before the first round, and set a tactical priority.</li><li><strong>Give a direction.</strong> Click a tile to set a destination, or let the hero follow their priority. Movement is orthogonal; obstacles and other miniatures cannot be crossed.</li><li><strong>Resolve the round.</strong> Initiative uses the match seed and each hero\u2019s mobility. Each hero moves, then automatically attacks, heals or guards.</li><li><strong>Control the relays.</strong> A squad alone within one tile of a relay earns 1 point per round. Contested relays score nothing. Reach 8 points or defeat the other squad. After 12 rounds, the higher score wins.</li>",
+    "guide.steps": "<li><strong>Choose an action.</strong> Select each hero, then choose Attack, Guard or Heal (for a healer). Automatic keeps the existing tactical behaviour. A Guard order deliberately gives up the attack.</li><li><strong>Set the target and movement.</strong> Pick an exact enemy or ally from the list. Click a tile for a destination, or choose Hold position. With no destination, an Attack or Heal order moves into range. Blue markers show this round\u2019s route and endpoint; the dashed line shows the target.</li><li><strong>Check your plan, then resolve.</strong> The preview uses current positions; earlier heroes may change them. A specific target is never silently replaced: if it falls, moves out of range or loses line of sight, the hero guards and the log explains why. Orders persist until changed; a destination clears on arrival. Replan between rounds.</li><li><strong>Control the relays.</strong> A squad alone within one tile of a relay earns 1 point per round. Contested relays score nothing. Reach 8 points or defeat the other squad. After 12 rounds, the higher score wins.</li>",
     "guide.combatTitle": "Readable combat",
     "guide.combatRoll": "Roll a proficiency die (d4 to d12) and a heroic d6: the higher result must reach 4. A maximum allows one additional roll, added to that die. Double 1 fails. Cover raises the target by 2 against ranged attacks; super speed adds 1 after moving 2 tiles. Beating the target by 4 is a great success: +2 damage and the target is shaken if it takes damage.",
     "guide.combatDamage": "Damage is fixed, reduced by armor, fields and guard, down to zero. Endurance replaces wound tracking. A shaken hero loses guard and field protection; they recover at their next action with \u22122 to that roll. Healing uses the action and takes one full round to recharge.",
@@ -396,7 +451,7 @@
     "error.jsonImport": "JSON import: {message}",
     "error.characterSchema": "Expected format: super-battles/character@1. Use the included template.",
     "error.combatMissing": "Missing combat profile.",
-    "error.skill": "Expected tactical skill: shield, arc, heal or dash.",
+    "error.skill": "Expected tactical skill: shield, arc, heal, dash or intercept.",
     "error.die": "Expected proficiency die: 4, 6, 8, 10 or 12.",
     "error.sheetLength": "The sheet exceeds 24,000 characters.",
     "error.textLength": "The text is empty or too long (26,000 characters maximum).",
@@ -453,7 +508,7 @@
     "error.triangles": "180,000 triangles maximum.",
     "error.modelType": "Choose an .stl or .glb file.",
     "error.modelDimensions": "Invalid model dimensions.",
-    "agent.character": "Create a JSON character for Super Battles, an independent game with its own rules. Preserve the original character details in sheet and sourceText. Do not claim to simulate every Savage Worlds power. Combat fields: hp integer 8..40, power 1..10, range 1..6, move 1..6, armor 0..3, skill one of shield/arc/heal/dash, die one of 4/6/8/10/12. The four supported effects are a shared field (shield), a piercing shot (arc), healing (heal) and speed with evasion (dash). Preserve narrative powers without an equivalent in the original sheet; explicitly identify adapted and unsupported powers. No executable code or external resources. A miniature must be a self-contained GLB with resources embedded in bufferViews, no Draco/Meshopt/KTX2, under 180000 triangles and 12 MiB; Y-up, front +Z. An uncolored Z-up STL also works.\n\nCharacter example:",
+    "agent.character": "Create a JSON character for Super Battles, an independent game with its own rules. Preserve the original character details in sheet and sourceText. Do not claim to simulate every Savage Worlds power. Combat fields: hp integer 8..40, power 1..10, range 1..6, move 1..6, armor 0..3, skill one of shield/arc/heal/dash/intercept, die one of 4/6/8/10/12. The five supported effects are a shared field (shield), a piercing shot (arc), healing (heal), speed with evasion (dash) and a once-per-round free melee strike on an enemy that ends its move adjacent (intercept). Preserve narrative powers without an equivalent in the original sheet; explicitly identify adapted and unsupported powers. No executable code or external resources. A miniature must be a self-contained GLB with resources embedded in bufferViews, no Draco/Meshopt/KTX2, under 180000 triangles and 12 MiB; Y-up, front +Z. An uncolored Z-up STL also works.\n\nCharacter example:",
     "agent.map": "Battlefield: width and height 5..15; zero-based integer [x,y] coordinates; at most 80 blocked tiles, 40 cover tiles, 1..5 objectives; two distinct spawns per squad. Every spawn must reach every objective. Example:"
   };
 
@@ -502,6 +557,34 @@
     "arena.reset": "Centrer",
     "arena.webgl": "Le rendu 3D demande WebGL. Activez l\u2019acc\xE9l\xE9ration graphique du navigateur, puis rechargez la page.",
     "orders.preview": "\u2726 Aper\xE7u du pouvoir",
+    "orders.action.label": "ACTION CE TOUR",
+    "orders.action.auto": "Automatique",
+    "orders.action.attack": "Attaquer",
+    "orders.action.guard": "Se mettre en garde",
+    "orders.action.heal": "Soigner",
+    "orders.focus.label": "CIBLE PR\xC9CISE",
+    "orders.focus.auto": "Choisir une cible valide",
+    "orders.movement.label": "D\xC9PLACEMENT",
+    "orders.movement.auto": "Avancer selon le plan",
+    "orders.movement.hold": "Tenir la position",
+    "orders.advanced": "Automatisme et \xE9quipement",
+    "orders.plan.title": "VOTRE PLAN",
+    "orders.plan.move": "Parcours : {count}/{max} cases \xB7 Arriv\xE9e en {x}, {y}.",
+    "orders.plan.attack": "Attaquer {target}.",
+    "orders.plan.heal": "Soigner {target}.",
+    "orders.plan.guard": "Se mettre en garde : r\xE9duire les d\xE9g\xE2ts de 2.",
+    "orders.plan.intercepted": "Termine \xE0 c\xF4t\xE9 de {names} : peut \xEAtre intercept\xE9 avant d\u2019agir.",
+    "orders.plan.down": "Ce h\xE9ros est hors combat.",
+    "orders.plan.caveat": "Aper\xE7u avec les positions actuelles. Les actions pr\xE9c\xE9dentes peuvent le modifier. Ordres conserv\xE9s jusqu\u2019\xE0 modification.",
+    "orders.reason.noTarget": "Aucun ennemi ne peut \xEAtre attaqu\xE9 depuis cette position.",
+    "orders.reason.noPatient": "Aucun alli\xE9 n\u2019a besoin de soins.",
+    "orders.reason.range": "La cible choisie est hors de port\xE9e.",
+    "orders.reason.blocked": "Le terrain bloque la ligne de vue.",
+    "orders.reason.targetDown": "La cible choisie est hors combat.",
+    "orders.reason.fullHealth": "L\u2019alli\xE9 choisi a d\xE9j\xE0 toute son endurance.",
+    "orders.reason.cooldown": "Le soin est encore en recharge.",
+    "error.healOrder": "Seul un h\xE9ros avec des nanites r\xE9paratrices peut recevoir l\u2019ordre Soigner.",
+    "error.orderTarget": "Choisissez un ennemi \xE0 attaquer ou un alli\xE9 \xE0 soigner.",
     "orders.equipment": "\xC9QUIPEMENT",
     "orders.tactic": "PRIORIT\xC9 TACTIQUE",
     "orders.target": "CIBLE PRIVIL\xC9GI\xC9E",
@@ -510,7 +593,7 @@
     "orders.destination.none": "Destination libre",
     "orders.destination.set": "Destination : {x} \xB7 {y}",
     "orders.destination.clear": "Effacer la destination",
-    "orders.destination.hint": "Cliquez une case du terrain pour fixer une destination.",
+    "orders.destination.hint": "Cliquez une case pour fixer la destination. Cliquez un ennemi pour le viser.",
     "orders.sheet": "Fiche",
     "orders.miniature": "Figurine",
     "audio.sound.on": "Son activ\xE9",
@@ -524,7 +607,7 @@
     "audio.error.effects": "Certains bruitages sont indisponibles. Le jeu reste jouable.",
     "audio.error.blocked": "Le navigateur a bloqu\xE9 le son. Utilisez le bouton Son pour r\xE9essayer.",
     "audio.error.music": "Musique indisponible. Les bruitages restent disponibles.",
-    "turn.hint.ready": "Vos ordres sont pr\xEAts. Observez leurs cons\xE9quences.",
+    "turn.hint.ready": "Choisissez la destination, l\u2019action et la cible de chaque h\xE9ros. Puis r\xE9solvez le tour.",
     "turn.hint.busy": "Les h\xE9ros ex\xE9cutent leurs ordres\u2026",
     "turn.hint.over": "L\u2019histoire continue : une autre \xE9quipe, une autre tactique ?",
     "turn.hint.room": "Vous commandez {team}. Validez quand vous \xEAtes pr\xEAt.",
@@ -547,7 +630,7 @@
     "open.title": "Un terrain ouvert<br>\xE0 vos id\xE9es.",
     "open.body": "Personnages et d\xE9cors fournis. Vos cr\xE9ations bienvenues. Aucun compte requis pour jouer en solo ou \xE0 deux sur cet \xE9cran.",
     "open.maps": "Importer ou exporter un d\xE9cor",
-    "footer.version": "SUPER BATTLES \xB7 PROTOTYPE 0.1",
+    "footer.version": "SUPER BATTLES \xB7 PROTOTYPE 0.2",
     "footer.tagline": "Un jeu ind\xE9pendant. Des histoires \xE0 partager.",
     "footer.export": "Exporter la partie",
     "footer.import": "Reprendre une partie",
@@ -582,6 +665,8 @@
     "hero.suture.tagline": "Personne ne reste derri\xE8re.",
     "hero.sillage.role": "\xC9claireuse",
     "hero.sillage.tagline": "D\xE9j\xE0 ailleurs. D\xE9j\xE0 en avance.",
+    "hero.killcam.role": "Intercepteuse",
+    "hero.killcam.tagline": "Menace \xE9valu\xE9e. Civils prot\xE9g\xE9s.",
     "hero.imported.role": "H\xE9ros import\xE9",
     "hero.imported.tagline": "Une nouvelle histoire entre en sc\xE8ne.",
     "hero.adapt.role": "Profil \xE0 adapter",
@@ -596,6 +681,8 @@
     "power.heal.description": "Une action, port\xE9e 4 avec ligne de vue : r\xE9cup\xE8re 4 endurance, ou 6 sur une prouesse. Une tentative tous les deux tours. Aucun retour des h\xE9ros hors combat.",
     "power.dash.name": "Super-vitesse",
     "power.dash.description": "Apr\xE8s un d\xE9placement d\u2019au moins 2 cases, les attaques contre ce h\xE9ros demandent +1 au jet jusqu\u2019\xE0 la fin du tour. Les obstacles restent infranchissables.",
+    "power.intercept.name": "Interception",
+    "power.intercept.description": "Une fois par tour, une attaque de m\xEAl\xE9e gratuite contre un ennemi qui termine son d\xE9placement \xE0 c\xF4t\xE9 de ce h\xE9ros apr\xE8s \xEAtre parti de plus loin. Elle a lieu avant l\u2019action de cet ennemi et ne consomme pas l\u2019action de ce h\xE9ros. Indisponible tant que ce h\xE9ros est \xE9branl\xE9.",
     "trapping.shield.name": "Champ cin\xE9tique",
     "trapping.shield.detail": "Arceaux cyan, onde de choc et r\xE9sonance magn\xE9tique.",
     "trapping.arc.name": "\xC9lectricit\xE9",
@@ -604,6 +691,8 @@
     "trapping.heal.detail": "Spirale de particules menthe et carillon cristallin.",
     "trapping.dash.name": "Super-vitesse",
     "trapping.dash.detail": "Rubans corail, r\xE9manence et souffle de d\xE9placement.",
+    "trapping.intercept.name": "Lames mol\xE9culaires",
+    "trapping.intercept.detail": "Double entaille cramoisie en croix et tintement ultrasonique.",
     "tactic.objective.label": "Tenir les relais",
     "tactic.objective.description": "Se rapprocher d\u2019un relais libre, puis d\xE9fendre sa position.",
     "tactic.assault.label": "Prendre l\u2019initiative",
@@ -625,6 +714,8 @@
     "log.heal": "{name} soigne {target} : +{amount} endurance (jet {total}, seuil {threshold}).",
     "log.healMiss": "{name} manque son soin (jet {total}, seuil {threshold}).",
     "log.miss": "{name} manque {target} (jet {total}, seuil {threshold}).",
+    "log.interceptMiss": "{name} intercepte {target} mais rate son coup (jet {total}, seuil {threshold}).",
+    "log.interceptHit": "{name} intercepte {target} : \u2212{amount} (jet {total}, seuil {threshold} ; puissance {power}+{bonus}, armure {armor}, champ {field}, garde {guard}).",
     "log.hit": "{name} touche {target} : \u2212{amount} (jet {total}, seuil {threshold} ; puissance {power}+{bonus}, armure {armor}, champ {field}, garde {guard}).",
     "log.shaken": "{name} est \xE9branl\xE9 : champ interrompu, prochain jet \u22122.",
     "log.down": "{name} est hors combat.",
@@ -679,7 +770,7 @@
     "maps.reset": "D\xE9cor d\u2019origine",
     "guide.title": "Pr\xE9parez. Observez. Adaptez.",
     "guide.intro": "<strong>Deux escouades, trois relais et des h\xE9ros qui ex\xE9cutent vos ordres.</strong> Vous pouvez jouer imm\xE9diatement avec les personnages fournis.",
-    "guide.steps": "<li><strong>Pr\xE9parez votre \xE9quipe.</strong> S\xE9lectionnez un personnage, choisissez son \xE9quipement avant le premier tour et sa priorit\xE9 tactique.</li><li><strong>Donnez une direction.</strong> Cliquez une case pour fixer une destination, ou laissez le h\xE9ros suivre sa priorit\xE9. D\xE9placement orthogonal, sans traverser les obstacles ou les autres figurines.</li><li><strong>R\xE9solvez le tour.</strong> Les h\xE9ros agissent dans un ordre tir\xE9 \xE0 partir de la graine de partie et de leur mobilit\xE9. Chacun se d\xE9place, puis attaque, soigne ou se prot\xE8ge automatiquement.</li><li><strong>Contr\xF4lez les relais.</strong> Une escouade seule \xE0 une case ou moins d\u2019un relais gagne 1 point par tour. Un relais contest\xE9 ne rapporte rien. Atteignez 8 points, ou mettez l\u2019autre escouade hors combat. Apr\xE8s 12 tours, le score d\xE9partage les \xE9quipes.</li>",
+    "guide.steps": "<li><strong>Choisissez une action.</strong> S\xE9lectionnez chaque h\xE9ros, puis Attaquer, Se mettre en garde ou Soigner (pour un soigneur). Automatique conserve le comportement tactique existant. La garde renonce volontairement \xE0 l\u2019attaque.</li><li><strong>Fixez la cible et le d\xE9placement.</strong> Choisissez un ennemi ou un alli\xE9 pr\xE9cis dans la liste. Cliquez une case pour la destination, ou choisissez Tenir la position. Sans destination, un ordre Attaquer ou Soigner avance \xE0 port\xE9e. Les rep\xE8res bleus montrent le trajet du tour et son arriv\xE9e ; la ligne pointill\xE9e indique la cible.</li><li><strong>V\xE9rifiez le plan, puis r\xE9solvez.</strong> L\u2019aper\xE7u utilise les positions actuelles ; les h\xE9ros pr\xE9c\xE9dents peuvent les modifier. Une cible pr\xE9cise n\u2019est jamais remplac\xE9e automatiquement : si elle tombe, sort de port\xE9e ou perd la ligne de vue, le h\xE9ros se prot\xE8ge et le journal explique pourquoi. Les ordres restent actifs jusqu\u2019\xE0 modification ; la destination s\u2019efface \xE0 l\u2019arriv\xE9e. Adaptez-les entre les tours.</li><li><strong>Contr\xF4lez les relais.</strong> Une escouade seule \xE0 une case ou moins d\u2019un relais gagne 1 point par tour. Un relais contest\xE9 ne rapporte rien. Atteignez 8 points ou mettez l\u2019autre escouade hors combat. Apr\xE8s 12 tours, le score d\xE9partage les \xE9quipes.</li>",
     "guide.combatTitle": "Des combats lisibles",
     "guide.combatRoll": "Un d\xE9 de ma\xEEtrise (d4 \xE0 d12) et un d\xE9 h\xE9ro\xEFque d6 : le meilleur r\xE9sultat doit atteindre 4. Un maximum permet une seule relance additionn\xE9e. Un double 1 \xE9choue. Le couvert ajoute 2 au seuil contre les tirs ; la super-vitesse ajoute 1 apr\xE8s un d\xE9placement de 2 cases. D\xE9passer le seuil de 4 donne une prouesse : +2 d\xE9g\xE2ts et cible \xE9branl\xE9e si elle subit des d\xE9g\xE2ts.",
     "guide.combatDamage": "Les d\xE9g\xE2ts sont fixes, r\xE9duits par l\u2019armure, le champ et la garde, jusqu\u2019\xE0 z\xE9ro. L\u2019endurance remplace le suivi des blessures. Un h\xE9ros \xE9branl\xE9 perd sa garde et son champ ; il se r\xE9tablit \xE0 sa prochaine action avec \u22122 \xE0 ce jet. Les soins prennent l\u2019action et se rechargent pendant un tour complet.",
@@ -724,7 +815,7 @@
     "error.jsonImport": "Import JSON : {message}",
     "error.characterSchema": "Format attendu : super-battles/character@1. Utilisez le mod\xE8le fourni.",
     "error.combatMissing": "Profil de combat manquant.",
-    "error.skill": "Pouvoir tactique attendu : shield, arc, heal ou dash.",
+    "error.skill": "Pouvoir tactique attendu : shield, arc, heal, dash ou intercept.",
     "error.die": "D\xE9 de ma\xEEtrise attendu : 4, 6, 8, 10 ou 12.",
     "error.sheetLength": "La fiche d\xE9passe 24 000 caract\xE8res.",
     "error.textLength": "Le texte est vide ou trop long (26 000 caract\xE8res maximum).",
@@ -781,7 +872,7 @@
     "error.triangles": "180 000 triangles maximum.",
     "error.modelType": "Choisissez un fichier .stl ou .glb.",
     "error.modelDimensions": "Dimensions du mod\xE8le invalides.",
-    "agent.character": "Cr\xE9e un personnage JSON pour Super Battles, un jeu autonome avec ses propres r\xE8gles. Pr\xE9serve les informations d\u2019origine dans sheet et sourceText. Ne pr\xE9tends pas simuler tous les pouvoirs de Savage Worlds. Champs combat : hp entier 8..40, power 1..10, range 1..6, move 1..6, armor 0..3, skill parmi shield/arc/heal/dash, die parmi 4/6/8/10/12. Les quatre effets pris en charge sont un champ partag\xE9 (shield), un tir perforant (arc), le soin (heal) et la vitesse avec esquive (dash). Les pouvoirs narratifs sans \xE9quivalent restent dans la fiche ; indique ce qui est adapt\xE9 ou non pris en charge. Aucun code ex\xE9cutable ni ressource externe. La figurine est un GLB autonome, ressources int\xE9gr\xE9es en bufferViews, sans Draco/Meshopt/KTX2, moins de 180000 triangles et 12 Mio ; Y-up, avant +Z. Un STL Z-up sans couleurs convient aussi.\n\nExemple de personnage :",
+    "agent.character": "Cr\xE9e un personnage JSON pour Super Battles, un jeu autonome avec ses propres r\xE8gles. Pr\xE9serve les informations d\u2019origine dans sheet et sourceText. Ne pr\xE9tends pas simuler tous les pouvoirs de Savage Worlds. Champs combat : hp entier 8..40, power 1..10, range 1..6, move 1..6, armor 0..3, skill parmi shield/arc/heal/dash/intercept, die parmi 4/6/8/10/12. Les cinq effets pris en charge sont un champ partag\xE9 (shield), un tir perforant (arc), le soin (heal), la vitesse avec esquive (dash) et, une fois par tour, une frappe de m\xEAl\xE9e gratuite sur un ennemi qui termine son d\xE9placement adjacent (intercept). Les pouvoirs narratifs sans \xE9quivalent restent dans la fiche ; indique ce qui est adapt\xE9 ou non pris en charge. Aucun code ex\xE9cutable ni ressource externe. La figurine est un GLB autonome, ressources int\xE9gr\xE9es en bufferViews, sans Draco/Meshopt/KTX2, moins de 180000 triangles et 12 Mio ; Y-up, avant +Z. Un STL Z-up sans couleurs convient aussi.\n\nExemple de personnage :",
     "agent.map": "D\xE9cor : largeur et hauteur 5..15 ; coordonn\xE9es enti\xE8res [x,y] commen\xE7ant \xE0 z\xE9ro ; blocked maximum 80, cover maximum 40, objectives 1..5 ; deux d\xE9parts distincts par \xE9quipe. Chaque d\xE9part doit atteindre tous les relais. Exemple :"
   };
 
@@ -904,7 +995,10 @@
       order: {
         tactic: hero.combat.skill === "heal" ? "support" : "objective",
         target: "nearest",
-        waypoint: null
+        waypoint: null,
+        action: "auto",
+        movement: "auto",
+        targetId: null
       },
       guard: 0,
       shaken: false,
@@ -942,7 +1036,7 @@
     }
     return true;
   }
-  function pathTo(state2, unit2, goal) {
+  function pathTo(state2, unit2, goal, accepts) {
     const occupied = new Set(
       state2.units.filter((u) => u.hp > 0 && u.id !== unit2.id).map((u) => key(u.x, u.y))
     );
@@ -954,7 +1048,7 @@
         best = p;
         bestD = d;
       }
-      if (d === 0) return p.path;
+      if (accepts ? accepts(p) : d === 0) return p.path;
       for (const [dx, dy] of [
         [1, 0],
         [0, 1],
@@ -970,13 +1064,35 @@
     }
     return best.path;
   }
+  function validateOrder(state2, u, order) {
+    if (!order || !Object.hasOwn(TACTICS, order.tactic) || !TARGETS.includes(order.target))
+      fail("error.unknownOrder");
+    const action2 = order.action === void 0 ? "auto" : order.action;
+    const movement = order.movement === void 0 ? "auto" : order.movement;
+    const targetId = order.targetId === void 0 ? null : order.targetId;
+    if (!ACTIONS.includes(action2) || !MOVEMENT.includes(movement)) fail("error.unknownOrder");
+    if (action2 === "heal" && u.hero.combat.skill !== "heal") fail("error.healOrder");
+    if (targetId !== null) {
+      const target = state2.units.find((t2) => t2.id === targetId);
+      if (!target || !["attack", "heal"].includes(action2) || (action2 === "attack" ? target.team === u.team : target.team !== u.team))
+        fail("error.orderTarget");
+    }
+    if (order.waypoint !== null && (!order.waypoint || !passable(state2.map, order.waypoint.x, order.waypoint.y)))
+      fail("error.inaccessible");
+    if (movement === "hold" && order.waypoint !== null) fail("error.destination");
+    return {
+      tactic: order.tactic,
+      target: order.target,
+      waypoint: order.waypoint === null ? null : { x: order.waypoint.x, y: order.waypoint.y },
+      action: action2,
+      movement,
+      targetId
+    };
+  }
   function applyOrder(state2, id, order) {
     const u = state2.units.find((u2) => u2.id === id);
     if (!u || u.hp <= 0 || state2.winner !== null) fail("error.unitUnavailable");
-    if (!TACTICS[order.tactic] || !TARGETS.includes(order.target)) fail("error.unknownOrder");
-    if (order.waypoint !== null && (!order.waypoint || !passable(state2.map, order.waypoint.x, order.waypoint.y)))
-      fail("error.inaccessible");
-    u.order = clone(order);
+    u.order = validateOrder(state2, u, order);
   }
   function setEquipment(state2, id, equipment) {
     if (state2.round !== 1 || state2.events.length) fail("error.equipmentLocked");
@@ -998,7 +1114,18 @@
     return distance(u, t2) <= stats(u).range && los(state2.map, u, t2);
   }
   function goalFor(state2, u) {
+    if (u.order.movement === "hold") return u;
     if (u.order.waypoint) return u.order.waypoint;
+    if (u.order.action === "guard") return u;
+    if (u.order.action === "attack" || u.order.action === "heal") {
+      const healing = u.order.action === "heal";
+      const target = u.order.targetId ? state2.units.find((t2) => t2.id === u.order.targetId) : healing ? healTarget(state2, u) : enemies(state2, u)[0];
+      if (!target || target.hp <= 0) return u;
+      if (healing && (target.hp >= stats(target).hp || state2.round < u.healReadyRound)) return u;
+      if (distance(u, target) <= (healing ? 4 : stats(u).range) && los(state2.map, u, target))
+        return u;
+      return target;
+    }
     const foes = enemies(state2, u), s = stats(u);
     if (u.order.tactic === "support") {
       const friend = healTarget(state2, u);
@@ -1026,9 +1153,102 @@
     if (foes.some((t2) => canAttack(state2, u, t2))) return u;
     return foes[0] || u;
   }
+  function movementFor(state2, u) {
+    const goal = goalFor(state2, u);
+    let accepts;
+    if (u.order.movement !== "hold" && !u.order.waypoint && ["attack", "heal"].includes(u.order.action)) {
+      const healing = u.order.action === "heal";
+      const target = u.order.targetId ? state2.units.find((t2) => t2.id === u.order.targetId) : healing ? healTarget(state2, u) : enemies(state2, u)[0];
+      if (target?.hp > 0 && (!healing || target.hp < stats(target).hp && state2.round >= u.healReadyRound))
+        accepts = (p) => distance(p, target) <= (healing ? 4 : stats(u).range) && los(state2.map, p, target);
+    }
+    return pathTo(state2, u, goal, accepts).slice(0, stats(u).move);
+  }
+  function actionFor(state2, u) {
+    const action2 = u.order.action || "auto";
+    if (action2 === "guard") return { action: "guard", reason: "ordered" };
+    const friend = action2 === "heal" && u.order.targetId ? state2.units.find((t2) => t2.id === u.order.targetId) : healTarget(state2, u);
+    if (action2 === "heal") {
+      if (state2.round < (u.healReadyRound || 1)) return { action: "guard", reason: "cooldown" };
+      if (!friend) return { action: "guard", reason: "noPatient" };
+      if (friend.hp <= 0) return { action: "guard", reason: "targetDown" };
+      if (friend.hp >= stats(friend).hp) return { action: "guard", reason: "fullHealth" };
+      if (distance(u, friend) > 4) return { action: "guard", reason: "range" };
+      if (!los(state2.map, u, friend)) return { action: "guard", reason: "blocked" };
+      return { action: "heal", target: friend.id };
+    }
+    if (action2 === "auto" && stats(u).skill === "heal" && state2.round >= (u.healReadyRound || 1) && friend && distance(u, friend) <= 4 && los(state2.map, u, friend) && u.order.tactic !== "assault")
+      return { action: "heal", target: friend.id };
+    const target = action2 === "attack" && u.order.targetId ? state2.units.find((t2) => t2.id === u.order.targetId) : enemies(state2, u).find((t2) => canAttack(state2, u, t2));
+    if (!target) return { action: "guard", reason: "noTarget" };
+    if (target.hp <= 0) return { action: "guard", reason: "targetDown" };
+    if (distance(u, target) > stats(u).range) return { action: "guard", reason: "range" };
+    if (!los(state2.map, u, target)) return { action: "guard", reason: "blocked" };
+    return { action: "attack", target: target.id };
+  }
+  function planOrder(state2, id) {
+    const u = state2.units.find((t2) => t2.id === id);
+    if (!u || u.hp <= 0) return null;
+    const path = movementFor(state2, u);
+    const endpoint = path.at(-1) || { x: u.x, y: u.y };
+    const projected = { ...u, ...endpoint, moved: path.length };
+    const board = { ...state2, units: state2.units.map((t2) => t2.id === id ? projected : t2) };
+    const interceptedBy = path.length ? interceptors(board, projected, { x: u.x, y: u.y }, /* @__PURE__ */ new Set(), true).map((k) => k.id) : [];
+    return {
+      path,
+      endpoint,
+      ...actionFor(board, projected),
+      ...interceptedBy.length ? { interceptedBy } : {}
+    };
+  }
+  function interceptors(state2, mover, from, used = /* @__PURE__ */ new Set(), includeShaken = false) {
+    return state2.units.filter(
+      (k) => k.hp > 0 && k.team !== mover.team && stats(k).skill === "intercept" && (includeShaken || !k.shaken) && !used.has(k.id) && distance(k, mover) === 1 && distance(k, from) > 1
+    ).sort((a, b) => a.id.localeCompare(b.id));
+  }
+  function strike(state2, u, target, penalty, random, record, extra = {}) {
+    const s = stats(u), roll = rollTrait(s.die || 8, random), threshold = attackThreshold(state2, u, target), total = roll.total - penalty;
+    if (roll.fumble || total < threshold) {
+      record({
+        type: "miss",
+        action: "attack",
+        unit: u.id,
+        target: target.id,
+        roll,
+        total,
+        threshold,
+        ...extra
+      });
+      return;
+    }
+    const bonus = total >= threshold + 4 ? 2 : 0, protection = defense(state2, target), armor = Math.max(0, protection.armor - (s.skill === "arc" ? 1 : 0));
+    const damage = Math.max(0, s.power + bonus - armor - protection.field - protection.guard);
+    target.hp = Math.max(0, target.hp - damage);
+    record({
+      type: "attack",
+      unit: u.id,
+      target: target.id,
+      amount: damage,
+      roll,
+      total,
+      threshold,
+      power: s.power,
+      armor,
+      field: protection.field,
+      guard: protection.guard,
+      bonus,
+      ...extra
+    });
+    if (bonus && damage > 0 && target.hp > 0) {
+      target.shaken = true;
+      target.guard = 0;
+      record({ type: "shaken", unit: target.id });
+    }
+    if (target.hp === 0) record({ type: "down", unit: target.id });
+  }
   function resolveRound(input) {
     if (input.winner !== null) fail("error.matchOver");
-    const state2 = clone(input), random = rng(state2.seed + state2.round * 7919), events = [], frames = [];
+    const state2 = clone(input), random = rng(state2.seed + state2.round * 7919), events = [], frames = [], used = /* @__PURE__ */ new Set();
     const record = (e) => {
       events.push(e);
       frames.push({ state: clone(state2), event: e });
@@ -1041,10 +1261,10 @@
     for (const { id } of initiative) {
       const u = state2.units.find((u2) => u2.id === id);
       if (u.hp <= 0) continue;
-      const penalty = u.shaken ? 2 : 0;
+      let penalty = u.shaken ? 2 : 0;
       u.shaken = false;
       if (penalty) record({ type: "recover", unit: id });
-      const goal = goalFor(state2, u), s = stats(u), path = pathTo(state2, u, goal), steps = path.slice(0, s.move);
+      const s = stats(u), steps = movementFor(state2, u);
       u.moved = steps.length;
       if (steps.length) {
         const from = { x: u.x, y: u.y };
@@ -1056,11 +1276,23 @@
           to: { x: u.x, y: u.y },
           path: steps
         });
+        for (const k of interceptors(state2, u, from, used)) {
+          used.add(k.id);
+          strike(state2, k, u, 0, random, record, { reaction: "intercept" });
+          if (u.hp <= 0) break;
+        }
+        if (u.hp <= 0) continue;
+        if (u.shaken) {
+          u.shaken = false;
+          penalty = 2;
+          record({ type: "recover", unit: id });
+        }
       }
       if (u.order.waypoint && u.x === u.order.waypoint.x && u.y === u.order.waypoint.y)
         u.order.waypoint = null;
-      const friend = healTarget(state2, u);
-      if (s.skill === "heal" && state2.round >= (u.healReadyRound || 1) && friend && distance(u, friend) <= 4 && los(state2.map, u, friend) && u.order.tactic !== "assault") {
+      const intent = actionFor(state2, u);
+      if (intent.action === "heal") {
+        const friend = state2.units.find((t2) => t2.id === intent.target);
         const roll = rollTrait(s.die || 8, random), total = roll.total - penalty;
         u.healReadyRound = state2.round + 2;
         if (!roll.fumble && total >= 4) {
@@ -1087,47 +1319,17 @@
           });
         continue;
       }
-      const target = enemies(state2, u).find((t2) => canAttack(state2, u, t2));
-      if (target) {
-        const roll = rollTrait(s.die || 8, random), threshold = attackThreshold(state2, u, target), total = roll.total - penalty;
-        if (roll.fumble || total < threshold) {
-          record({
-            type: "miss",
-            action: "attack",
-            unit: id,
-            target: target.id,
-            roll,
-            total,
-            threshold
-          });
-          continue;
-        }
-        const bonus = total >= threshold + 4 ? 2 : 0, protection = defense(state2, target), armor = Math.max(0, protection.armor - (s.skill === "arc" ? 1 : 0));
-        const damage = Math.max(0, s.power + bonus - armor - protection.field - protection.guard);
-        target.hp = Math.max(0, target.hp - damage);
-        record({
-          type: "attack",
-          unit: id,
-          target: target.id,
-          amount: damage,
-          roll,
-          total,
-          threshold,
-          power: s.power,
-          armor,
-          field: protection.field,
-          guard: protection.guard,
-          bonus
-        });
-        if (bonus && damage > 0 && target.hp > 0) {
-          target.shaken = true;
-          target.guard = 0;
-          record({ type: "shaken", unit: target.id });
-        }
-        if (target.hp === 0) record({ type: "down", unit: target.id });
+      if (intent.action === "attack") {
+        const target = state2.units.find((t2) => t2.id === intent.target);
+        strike(state2, u, target, penalty, random, record);
       } else {
         u.guard = 2;
-        record({ type: "guard", unit: id, amount: u.guard });
+        record({
+          type: "guard",
+          unit: id,
+          amount: u.guard,
+          ...u.order.action && u.order.action !== "auto" ? { reason: intent.reason } : {}
+        });
       }
     }
     for (const [x, y] of state2.map.objectives) {
@@ -1156,7 +1358,10 @@
       u.order = {
         tactic: u.hero.combat.skill === "heal" && healTarget(result, u) ? "support" : result.round > 4 ? "assault" : "objective",
         target: "weakest",
-        waypoint: null
+        waypoint: null,
+        action: "auto",
+        movement: "auto",
+        targetId: null
       };
     }
     return result;
@@ -1345,10 +1550,7 @@ ${JSON.stringify(hero.combat, null, 2)}
       const k = `${u.x},${u.y}`;
       if (u.hp > 0 && occupied.has(k)) fail("error.sameTile");
       if (u.hp > 0) occupied.add(k);
-      if (!u.order || !Object.hasOwn(TACTICS, u.order.tactic) || !TARGETS.includes(u.order.target))
-        fail("error.order");
-      if (u.order.waypoint !== null && (!u.order.waypoint || !passable(s.map, u.order.waypoint.x, u.order.waypoint.y)))
-        fail("error.destination");
+      u.order = validateOrder(s, u, u.order);
       return u;
     });
     s.events = [];
@@ -1399,6 +1601,11 @@ ${JSON.stringify(hero.combat, null, 2)}
       color: "#ee735b",
       asset: "fx-dash",
       sound: "dash"
+    },
+    intercept: {
+      color: "#c43d6a",
+      asset: "fx-intercept",
+      sound: "intercept"
     }
   });
   function eventPresentation(event, state2) {
@@ -1461,14 +1668,14 @@ ${JSON.stringify(hero.combat, null, 2)}
           threshold: event.threshold
         });
       case "miss":
-        return event.action === "heal" ? t("log.healMiss", { name: actor, total: event.total, threshold: event.threshold }) : t("log.miss", {
+        return event.action === "heal" ? t("log.healMiss", { name: actor, total: event.total, threshold: event.threshold }) : t(event.reaction === "intercept" ? "log.interceptMiss" : "log.miss", {
           name: actor,
           target: name(event.target),
           total: event.total,
           threshold: event.threshold
         });
       case "attack":
-        return t("log.hit", {
+        return t(event.reaction === "intercept" ? "log.interceptHit" : "log.hit", {
           name: actor,
           target: name(event.target),
           amount: event.amount,
@@ -1485,7 +1692,7 @@ ${JSON.stringify(hero.combat, null, 2)}
       case "down":
         return t("log.down", { name: actor });
       case "guard":
-        return t("log.guard", { name: actor, guard: event.amount });
+        return t("log.guard", { name: actor, guard: event.amount }) + (event.reason && event.reason !== "ordered" ? ` ${t(`orders.reason.${event.reason}`)}` : "");
       case "score":
         return t("log.score", { team: t(`team.${event.team}`) });
       default:
@@ -1521,15 +1728,41 @@ ${JSON.stringify(hero.combat, null, 2)}
   function rosterHTML(state2, team2, selected2) {
     return state2.units.filter((u) => u.team === team2).map((u) => {
       const max = stats(u).hp, active = selected2 === u.id;
-      return `<button class="hero-card ${active ? "active" : ""} ${u.hp <= 0 ? "down-card" : ""}" data-id="${esc(u.id)}" aria-pressed="${active}" aria-label="${esc(t("squad.select", { name: u.hero.name }))}" style="--hero-color:${esc(u.hero.color)}"><img src="${portrait(u.hero.model)}" alt=""><span><b translate="no">${esc(u.hero.name)}</b><span class="role">${esc(heroText(u.hero, "role"))}</span><span class="hp-track"><i style="width:${Math.max(0, u.hp / max * 100)}%"></i></span><span class="hp-label">${esc(t("squad.hp", { hp: u.hp, max }))}</span></span></button>`;
+      const focus = state2.units.find((t2) => t2.id === u.order.targetId);
+      return `<button class="hero-card ${active ? "active" : ""} ${u.hp <= 0 ? "down-card" : ""}" data-id="${esc(u.id)}" aria-pressed="${active}" aria-label="${esc(t("squad.select", { name: u.hero.name }))}" style="--hero-color:${esc(u.hero.color)}"><img src="${portrait(u.hero.model)}" alt=""><span><b translate="no">${esc(u.hero.name)}</b><span class="role">${esc(heroText(u.hero, "role"))}</span><span class="hp-track"><i style="width:${Math.max(0, u.hp / max * 100)}%"></i></span><span class="hp-label">${esc(t("squad.hp", { hp: u.hp, max }))}</span><span class="order-badge">${esc(t(`orders.action.${u.order.action || "auto"}`))}${focus ? ` \xB7 ${esc(focus.hero.name)}` : ""}</span></span></button>`;
     }).join("");
   }
   function selectedHeaderHTML(unit2, state2) {
     const s = stats(unit2);
     const stat = (key2) => `<span>${s[key2]}<small>${esc(upper(t(`stat.${key2}`)))}</small></span>`;
-    return `<div class="name-row"><h2 translate="no">${esc(unit2.hero.name)}</h2><span class="type-label">${esc(upper(heroText(unit2.hero, "role")))}</span></div><div class="hero-stats">${["power", "range", "move", "armor"].map(stat).join("")}</div>` + powerHTML(unit2.hero) + (unit2.shaken ? `<p class="status-note">${esc(t("status.shaken"))}</p>` : "") + (s.skill === "heal" && unit2.healReadyRound > state2.round ? `<p class="status-note">${esc(t("status.healReady", { round: unit2.healReadyRound }))}</p>` : "");
+    return `<div class="name-row"><h2 translate="no">${esc(unit2.hero.name)}</h2><span class="type-label">${esc(upper(heroText(unit2.hero, "role")))}</span></div><div class="hero-stats">${["power", "range", "move", "armor"].map(stat).join("")}</div><details class="power-details"><summary>${esc(t(`power.${s.skill}.name`))}</summary>${powerHTML(unit2.hero)}</details>` + (unit2.shaken ? `<p class="status-note">${esc(t("status.shaken"))}</p>` : "") + (s.skill === "heal" && unit2.healReadyRound > state2.round ? `<p class="status-note">${esc(t("status.healReady", { round: unit2.healReadyRound }))}</p>` : "");
   }
   var equipmentOptionsHTML = () => Object.keys(EQUIPMENT).map((id) => `<option value="${id}">${esc(t(`equipment.${id}.label`))}</option>`).join("");
+  var actionOptionsHTML = (unit2) => ACTIONS.filter((id) => id !== "heal" || unit2.hero.combat.skill === "heal").map((id) => `<option value="${id}">${esc(t(`orders.action.${id}`))}</option>`).join("");
+  function targetOptionsHTML(state2, unit2) {
+    const action2 = unit2.order.action || "auto";
+    return `<option value="">${esc(t("orders.focus.auto"))}</option>` + state2.units.filter(
+      (u) => (u.hp > 0 || u.id === unit2.order.targetId) && (action2 === "heal" ? u.team === unit2.team : u.team !== unit2.team)
+    ).map(
+      (u) => `<option value="${esc(u.id)}">${esc(u.hero.name)} \xB7 ${u.hp}/${stats(u).hp}</option>`
+    ).join("");
+  }
+  function planHTML(state2, unit2) {
+    const plan = planOrder(state2, unit2.id);
+    if (!plan) return `<p>${esc(t("orders.plan.down"))}</p>`;
+    const target = state2.units.find((u) => u.id === plan.target)?.hero.name || "";
+    const move = t("orders.plan.move", {
+      count: plan.path.length,
+      max: stats(unit2).move,
+      x: plan.endpoint.x + 1,
+      y: plan.endpoint.y + 1
+    });
+    const action2 = t(`orders.plan.${plan.action}`, { target });
+    const warning = plan.reason && plan.reason !== "ordered" ? `<p class="plan-warning">${esc(t(`orders.reason.${plan.reason}`))}</p>` : "";
+    const names = (plan.interceptedBy || []).map((id) => state2.units.find((u) => u.id === id)?.hero.name).filter(Boolean).join(", ");
+    const intercept = names ? `<p class="plan-warning">${esc(t("orders.plan.intercepted", { names }))}</p>` : "";
+    return `<b>${esc(t("orders.plan.title"))}</b><p>${esc(move)}</p>${intercept}<p>${esc(action2)}</p>${warning}<small>${esc(t("orders.plan.caveat"))}</small>`;
+  }
   function tacticsHTML(unit2, editable2) {
     return Object.entries(TACTICS).map(([id, { icon }]) => {
       const active = unit2.order.tactic === id;
@@ -1615,7 +1848,7 @@ ${t("agent.map")}
 ${JSON.stringify(map, null, 2)}`;
   }
 
-  // node_modules/three/build/three.core.js
+  // ../super-battles/node_modules/three/build/three.core.js
   /**
    * @license
    * Copyright 2010-2026 Three.js Authors
@@ -17421,6 +17654,33 @@ ${JSON.stringify(map, null, 2)}`;
       return this;
     }
   };
+  var LineDashedMaterial = class extends LineBasicMaterial {
+    /**
+     * Constructs a new line dashed material.
+     *
+     * @param {Object} [parameters] - An object with one or more properties
+     * defining the material's appearance. Any property of the material
+     * (including any property from inherited materials) can be passed
+     * in here. Color values can be passed any type of value accepted
+     * by {@link Color#set}.
+     */
+    constructor(parameters) {
+      super();
+      this.isLineDashedMaterial = true;
+      this.type = "LineDashedMaterial";
+      this.scale = 1;
+      this.dashSize = 3;
+      this.gapSize = 1;
+      this.setValues(parameters);
+    }
+    copy(source) {
+      super.copy(source);
+      this.scale = source.scale;
+      this.dashSize = source.dashSize;
+      this.gapSize = source.gapSize;
+      return this;
+    }
+  };
   function convertArray(array, type) {
     if (!array || array.constructor === type) return array;
     if (typeof type.BYTES_PER_ELEMENT === "number") {
@@ -21257,7 +21517,7 @@ ${JSON.stringify(map, null, 2)}`;
     }
   }
 
-  // node_modules/three/build/three.module.js
+  // ../super-battles/node_modules/three/build/three.module.js
   /**
    * @license
    * Copyright 2010-2026 Three.js Authors
@@ -32648,7 +32908,7 @@ void main() {
     }
   };
 
-  // node_modules/three/examples/jsm/controls/OrbitControls.js
+  // ../super-battles/node_modules/three/examples/jsm/controls/OrbitControls.js
   var _changeEvent = { type: "change" };
   var _startEvent = { type: "start" };
   var _endEvent = { type: "end" };
@@ -33570,7 +33830,7 @@ void main() {
     }
   }
 
-  // node_modules/three/examples/jsm/utils/BufferGeometryUtils.js
+  // ../super-battles/node_modules/three/examples/jsm/utils/BufferGeometryUtils.js
   function toTrianglesDrawMode(geometry, drawMode) {
     if (drawMode === TrianglesDrawMode) {
       console.warn("THREE.BufferGeometryUtils.toTrianglesDrawMode(): Geometry already defined as triangles.");
@@ -33625,7 +33885,7 @@ void main() {
     }
   }
 
-  // node_modules/three/examples/jsm/utils/SkeletonUtils.js
+  // ../super-battles/node_modules/three/examples/jsm/utils/SkeletonUtils.js
   function clone2(source) {
     const sourceLookup = /* @__PURE__ */ new Map();
     const cloneLookup = /* @__PURE__ */ new Map();
@@ -33655,7 +33915,7 @@ void main() {
     }
   }
 
-  // node_modules/three/examples/jsm/loaders/GLTFLoader.js
+  // ../super-battles/node_modules/three/examples/jsm/loaders/GLTFLoader.js
   var GLTFLoader = class extends Loader {
     /**
      * Constructs a new glTF loader.
@@ -36271,7 +36531,7 @@ void main() {
     });
   }
 
-  // node_modules/three/examples/jsm/loaders/STLLoader.js
+  // ../super-battles/node_modules/three/examples/jsm/loaders/STLLoader.js
   var STLLoader = class extends Loader {
     /**
      * Constructs a new STL loader.
@@ -36528,7 +36788,8 @@ void main() {
             "fx-shield": ["#159fbe", "#7edce5"],
             "fx-arc": ["#b97a0b", "#ffdb78"],
             "fx-heal": ["#179d72", "#83e7b2"],
-            "fx-dash": ["#d95e4d", "#ffb393"]
+            "fx-dash": ["#d95e4d", "#ffb393"],
+            "fx-intercept": ["#b8325c", "#ffe3ec"]
           }[key2];
           const convert = (m, i) => new MeshBasicMaterial({
             color: palette?.[i % 2] || m.emissive || m.color,
@@ -36537,7 +36798,7 @@ void main() {
             toneMapped: false,
             side: DoubleSide
           });
-          o.material = Array.isArray(o.material) ? o.material.map(convert) : convert(o.material, /highlights|core|glyph|bevel/i.test(o.material.name) ? 1 : 0);
+          o.material = Array.isArray(o.material) ? o.material.map(convert) : convert(o.material, /highlights|core|glyph|bevel|edge/i.test(o.material.name) ? 1 : 0);
         }
       });
       return group;
@@ -36761,6 +37022,11 @@ void main() {
         } else if (p.skill === "dash") {
           this.model("dash", aiming, 900, 1.25);
           this.particles(aiming.clone().setY(0.7), p.color);
+        } else if (p.skill === "intercept") {
+          const slash = this.model("intercept", aiming.clone().lerp(a, 0.45), 850, 1.1);
+          if (slash) slash.rotation.y = Math.atan2(a.x - b.x, a.z - b.z);
+          if (event.reaction === "intercept") this.ring(a, p.color, 0.85, 750);
+          this.particles(aiming.clone().setY(0.85), p.color, 14);
         } else {
           this.beam(p.skill, a.clone().setY(1), aiming.clone().setY(0.85));
           this.particles(aiming.clone().setY(0.85), p.color, 16);
@@ -36867,6 +37133,8 @@ void main() {
       this.scene.add(this.board);
       this.pieces = new Group();
       this.scene.add(this.pieces);
+      this.planning = new Group();
+      this.scene.add(this.planning);
       this.ray = new Raycaster();
       this.pointer = new Vector2();
       let down;
@@ -36874,7 +37142,7 @@ void main() {
         down = { x: e.clientX, y: e.clientY };
       });
       container.addEventListener("pointerup", (e) => {
-        if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6) return;
+        if (e.button !== 0 || !down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6) return;
         const r = this.renderer.domElement.getBoundingClientRect();
         this.pointer.set(
           (e.clientX - r.left) / r.width * 2 - 1,
@@ -36958,6 +37226,7 @@ void main() {
     }
     setMap(map) {
       this.powerEffects.clear();
+      this.clearPlan();
       this.map = map;
       this.board.clear();
       for (const token of this.tokens.values()) {
@@ -37086,22 +37355,55 @@ void main() {
         token.rotation.y = u.team === 0 ? Math.PI / 2 : -Math.PI / 2;
         token.visible = u.hp > 0;
       }
-      if (this.marker) this.scene.remove(this.marker);
-      const active = state2.units.find((u) => u.id === selected2);
-      if (active?.order.waypoint) {
-        const p = this.pos(active.order.waypoint.x, active.order.waypoint.y);
-        this.marker = new Mesh(
-          new RingGeometry(0.25, 0.38, 4),
-          new MeshBasicMaterial({
-            color: "#218ca0",
-            side: DoubleSide,
-            transparent: true,
-            opacity: 0.8
-          })
+    }
+    clearPlan() {
+      this.planning.traverse((o) => {
+        o.geometry?.dispose();
+        o.material?.dispose();
+      });
+      this.planning.clear();
+    }
+    setPlan(state2, id) {
+      this.clearPlan();
+      const active = state2.units.find((u) => u.id === id), plan = planOrder(state2, id);
+      if (!active || !plan) return;
+      const at = (p, height = 0.14) => this.pos(p.x, p.y).setY(height);
+      const ring = (point, color, radius = 0.28) => {
+        const mesh = new Mesh(
+          new RingGeometry(radius, radius + 0.06, 24),
+          new MeshBasicMaterial({ color, side: DoubleSide })
         );
-        this.marker.rotation.x = -Math.PI / 2;
-        this.marker.position.copy(p).setY(0.11);
-        this.scene.add(this.marker);
+        mesh.rotation.x = -Math.PI / 2;
+        mesh.position.copy(at(point));
+        this.planning.add(mesh);
+      };
+      if (plan.path.length) {
+        const line = new Line(
+          new BufferGeometry().setFromPoints([active, ...plan.path].map((p) => at(p))),
+          new LineBasicMaterial({ color: "#218ca0" })
+        );
+        this.planning.add(line);
+        plan.path.forEach((p) => ring(p, "#218ca0", 0.11));
+      }
+      ring(plan.endpoint, "#218ca0");
+      if (plan.interceptedBy) {
+        ring(plan.endpoint, TRAPPINGS.intercept.color, 0.36);
+        for (const id2 of plan.interceptedBy) {
+          const k = state2.units.find((u) => u.id === id2);
+          if (k) ring(k, TRAPPINGS.intercept.color, 0.36);
+        }
+      }
+      if (active.order.waypoint) ring(active.order.waypoint, "#218ca0", 0.39);
+      const target = state2.units.find((u) => u.id === (plan.target || active.order.targetId));
+      if (target?.hp > 0) {
+        const color = plan.action === "guard" ? "#b56b48" : plan.action === "heal" ? "#259674" : "#b57c1c";
+        ring(target, color, 0.47);
+        const line = new Line(
+          new BufferGeometry().setFromPoints([at(plan.endpoint, 0.65), at(target, 0.65)]),
+          new LineDashedMaterial({ color, dashSize: 0.18, gapSize: 0.12 })
+        );
+        line.computeLineDistances();
+        this.planning.add(line);
       }
     }
     effect(event) {
@@ -37194,6 +37496,7 @@ void main() {
   };
 
   // src/network.js
+  var ROOM_PROTOCOL = "super-battles@2";
   function wireState(state2) {
     const s = clone(state2);
     s.events = [];
@@ -37246,13 +37549,13 @@ void main() {
       }, 12e3);
     }
     send(payload) {
-      return this.lobby.send({ game: "super-battles@1", ...payload });
+      return this.lobby.send({ game: ROOM_PROTOCOL, ...payload });
     }
     async setup() {
       await this.send({ type: "setup", session: this.session, state: wireState(this.state) });
     }
     async receive(message) {
-      if (this.closed || !message?.sender?.id || message.sender.id === this.lobby.room.me.id || message.data?.game !== "super-battles@1")
+      if (this.closed || !message?.sender?.id || message.sender.id === this.lobby.room.me.id || message.data?.game !== ROOM_PROTOCOL)
         return;
       const data = message.data, sender = message.sender.id;
       if (!this.host && sender !== this.lobby.room.hostId) return;
@@ -37353,7 +37656,7 @@ void main() {
   };
 
   // src/audio.js
-  var SOUND_NAMES = ["shield", "arc", "heal", "dash"];
+  var SOUND_NAMES = ["shield", "arc", "heal", "dash", "intercept"];
   var BattleAudio = class {
     // onError receives an i18n key; the interface translates it.
     constructor(onError = () => {
@@ -37667,6 +37970,15 @@ void main() {
     $("roster").innerHTML = rosterHTML(state, team, selected);
     $("roster").querySelectorAll("button").forEach((b) => b.onclick = () => selectUnit(b.dataset.id));
     $("selected-header").innerHTML = selectedHeaderHTML(u, state);
+    $("action").innerHTML = actionOptionsHTML(u);
+    $("action").value = u.order.action || "auto";
+    $("action").disabled = !canEdit;
+    $("focus-target").innerHTML = targetOptionsHTML(state, u);
+    $("focus-target").value = u.order.targetId || "";
+    $("focus-target").disabled = !canEdit || !["attack", "heal"].includes(u.order.action);
+    $("movement").value = u.order.movement || "auto";
+    $("movement").disabled = !canEdit;
+    $("order-plan").innerHTML = planHTML(state, u);
     $("equipment").innerHTML = equipmentOptionsHTML();
     $("equipment").value = u.equipment;
     $("equipment").disabled = !setupEditable() || !canEdit;
@@ -37690,7 +38002,10 @@ void main() {
     $("turn-hint").textContent = busy ? t("turn.hint.busy") : state.winner !== null ? t("turn.hint.over") : room ? t("turn.hint.room", { team: teamName(team) }) : t(mode === "local" ? "turn.hint.local" : "turn.hint.ready");
     $("banner").hidden = state.winner === null;
     if (state.winner !== null) $("banner").innerHTML = bannerHTML(state);
-    if (arena) void arena.setUnits(state, selected);
+    if (arena) {
+      void arena.setUnits(state, selected);
+      arena.setPlan(state, canEdit ? selected : null);
+    }
     if (!busy) save();
   }
   function showModal(build, wire = () => {
@@ -37829,7 +38144,10 @@ void main() {
     u.order = {
       tactic: hero.combat.skill === "heal" ? "support" : "objective",
       target: "nearest",
-      waypoint: null
+      waypoint: null,
+      action: "auto",
+      movement: "auto",
+      targetId: null
     };
     delete u.customModel;
     render();
@@ -38081,6 +38399,9 @@ void main() {
     }
   };
   $("target").onchange = () => changeOrder({ target: $("target").value });
+  $("action").onchange = () => changeOrder({ action: $("action").value, targetId: null });
+  $("focus-target").onchange = () => changeOrder({ targetId: $("focus-target").value || null });
+  $("movement").onchange = () => changeOrder({ movement: $("movement").value, waypoint: null });
   $("clear-waypoint").onclick = () => changeOrder({ waypoint: null });
   $("team-a-tab").onclick = () => {
     if (mode === "lob7" && team !== 0) return;
@@ -38122,6 +38443,13 @@ void main() {
     team = 0;
     lastReplay = null;
     arena?.setMap(state.map);
+    journal = {
+      heading: ["journal.restored"],
+      events: [],
+      units: [],
+      emptyKey: "journal.restoredBody"
+    };
+    renderJournal();
     render();
     toast(t("session.restored"));
   });
@@ -38143,7 +38471,16 @@ void main() {
   if (LANGUAGES.includes(preferred)) setLanguage(preferred);
   onLanguageChange(applyLanguage);
   try {
-    arena = new Arena($("arena"), (x, y) => changeOrder({ waypoint: { x, y } }), selectUnit);
+    arena = new Arena(
+      $("arena"),
+      (x, y) => changeOrder({ waypoint: { x, y }, movement: "auto" }),
+      (id) => {
+        const target = state.units.find((u) => u.id === id);
+        if (editable() && target?.hp > 0 && target.team !== unit().team)
+          changeOrder({ action: "attack", targetId: id });
+        else selectUnit(id);
+      }
+    );
     arena.setMap(state.map);
   } catch (e) {
     $("arena").innerHTML = '<p class="notice" data-i18n="arena.webgl"></p>';

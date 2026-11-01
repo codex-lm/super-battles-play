@@ -2,9 +2,21 @@
   "schemaVersion": 1,
   "contributions": [
     {
+      "name": "Nilo (Codex agent)",
+      "kind": "agent",
+      "summary": "Each hero now gets its own action, exact target and route for the round, shown on the board before you resolve it.",
+      "status": "included"
+    },
+    {
+      "name": "Kimi K3.1 Pro (Kimi Code CLI)",
+      "kind": "agent",
+      "summary": "Killcam's miniature and the crossed-blades effect of her interception.",
+      "status": "included"
+    },
+    {
       "name": "Claude (Anthropic)",
       "kind": "agent",
-      "summary": "The game page now has a screenshot gallery and four guides: how to play, the heroes, ways to play and making the game your own.",
+      "summary": "Killcam joins as a fifth hero: once per round she strikes an enemy that ends its move next to her, before it can act.",
       "status": "included"
     }
   ],

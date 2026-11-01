@@ -837,11 +837,15 @@ dialog .actions {
 }
 .choice-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 10px;
   margin: 18px 0;
 }
 .choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   border: 1px solid #d4ddc8;
   border-radius: 9px;
   padding: 9px;
@@ -1249,7 +1253,7 @@ pre {
     display: none;
   }
   .choice-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
   dialog {
     padding: 21px;
@@ -1503,5 +1507,71 @@ pre {
 @media (prefers-reduced-motion: reduce) {
   .combat-number {
     transition: none;
+  }
+}
+
+/* Put deliberate round orders first; autopilot and setup stay available. */
+.order-badge {
+  display: block;
+  margin-top: 7px;
+  font-size: 9px;
+  color: #486b5d;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.power-details {
+  margin-top: 15px;
+  font-size: 11px;
+  color: #506b60;
+}
+.power-details summary,
+.advanced-orders summary {
+  cursor: pointer;
+  line-height: 1.6;
+}
+.order-plan {
+  border: 1px solid #c5d5c7;
+  border-left: 3px solid #218ca0;
+  border-radius: 6px;
+  padding: 11px;
+  margin: 14px 0;
+  background: #edf2e8;
+  font-size: 11px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.order-plan b {
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+.order-plan p {
+  margin: 5px 0;
+}
+.order-plan small {
+  display: block;
+  font-size: 9px;
+  color: #697766;
+}
+.order-plan .plan-warning {
+  color: #9b5536;
+}
+.advanced-orders {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  font-size: 10px;
+  color: #526b58;
+}
+.orders-panel > .field-label {
+  margin-top: 14px;
+}
+@media (min-width: 851px) {
+  .game-grid {
+    grid-template-columns: 190px minmax(0, 1fr) 260px;
+  }
+  .arena-wrap {
+    height: clamp(500px, 65vh, 650px);
+    align-self: start;
+    position: sticky;
+    top: 12px;
   }
 }

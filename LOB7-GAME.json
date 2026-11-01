@@ -1,20 +1,21 @@
 {
   "title": "Super Battles",
-  "description": "A tactical tabletop auto-battler for the browser. Equip four original superheroes, give each one a priority and a destination, then watch the round resolve with dice, cover, force fields, healing and speed. Hold the relays or defeat the other squad. Solo against the automaton, two players on one screen, or two players in a LOB7 room. Bring your own character sheet, battlefield or 3D miniature. English and French.",
+  "description": "A tactical tabletop auto-battler for the browser. Pick two of five original superheroes per squad, give each one an action, a target and a route, then watch the round resolve with dice, cover, force fields, healing, speed and interception. Hold the relays or defeat the other squad. Solo against the automaton, two players on one screen, or two players in a LOB7 room. Bring your own character sheet, battlefield or 3D miniature. English and French.",
   "entrypoint": "index.html",
   "cover": "cover.jpg",
   "screenshots": [
     "screenshots/01-round-in-action.jpg",
-    "screenshots/02-orders-and-powers.jpg",
-    "screenshots/03-repair-nanites.jpg",
+    "screenshots/02-orders-and-plan.jpg",
+    "screenshots/03-killcam-intercept.jpg",
     "screenshots/04-battle-log.jpg",
-    "screenshots/05-battlefield-workshop.jpg"
+    "screenshots/05-hero-workshop.jpg",
+    "screenshots/06-battlefield-workshop.jpg"
   ],
   "license": "MIT",
   "assetsLicense": "Code: MIT (LICENSE). Miniatures, power effects, portraits, sound effects and music: CC BY 4.0 (ASSETS-LICENSE), with the credits listed there.",
   "controls": [
-    "Select a hero, choose equipment before round one, then a tactical priority and target.",
-    "Click a tile on the 3D board to set a destination; drag to rotate the view.",
+    "Select a hero, then choose its action (Attack, Guard or Heal), exact target and movement; equipment before round one.",
+    "Click a tile on the 3D board to set a destination, or an enemy to aim; drag to rotate the view.",
     "Resolve round plays the turn; Replay shows it again. EN/FR selector at the top."
   ],
   "genre": [
@@ -31,7 +32,7 @@
     "Kimi K3.1 Pro via Kimi Code CLI — miniature designs and power-effect geometry (procedural Blender)",
     "ElevenLabs SFX v3 — power sound effects",
     "Suno V6-MINI — “Relay at Dawn” music",
-    "Claude (Anthropic) — localization architecture and code refactor"
+    "Claude (Anthropic) — localization architecture, code refactor, Killcam’s Intercept rules and its synthesized sound"
   ],
   "multiplayer": {
     "mode": "room",

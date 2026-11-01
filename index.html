@@ -128,22 +128,24 @@
           <aside class="orders-panel">
             <div class="panel-kicker" data-i18n="panel.orders">02 / YOUR ORDERS</div>
             <div id="selected-header"></div>
-            <button id="preview-power" class="power-preview" data-i18n="orders.preview">
-              ✦ Preview power</button
-            ><label class="field-label" for="equipment" data-i18n="orders.equipment"
-              >EQUIPMENT</label
-            ><select id="equipment"></select>
-            <p id="equipment-note" class="field-note"></p>
-            <div class="field-label" data-i18n="orders.tactic">TACTICAL PRIORITY</div>
-            <div id="tactics"></div>
-            <label class="field-label" for="target" data-i18n="orders.target">TARGET PRIORITY</label
-            ><select id="target">
-              <option value="nearest" data-i18n="orders.target.nearest">Nearest</option>
-              <option value="weakest" data-i18n="orders.target.weakest">Weakest</option>
+            <label class="field-label" for="action" data-i18n="orders.action.label"
+              >ACTION THIS ROUND</label
+            >
+            <select id="action"></select>
+            <label class="field-label" for="focus-target" data-i18n="orders.focus.label"
+              >EXACT TARGET</label
+            >
+            <select id="focus-target"></select>
+            <label class="field-label" for="movement" data-i18n="orders.movement.label"
+              >MOVEMENT</label
+            >
+            <select id="movement">
+              <option value="auto" data-i18n="orders.movement.auto">Move toward the plan</option>
+              <option value="hold" data-i18n="orders.movement.hold">Hold position</option>
             </select>
             <div class="destination">
-              <span id="destination-label">No fixed destination</span
-              ><button
+              <span id="destination-label">No fixed destination</span>
+              <button
                 id="clear-waypoint"
                 aria-label="Clear destination"
                 data-i18n-attr="aria-label:orders.destination.clear"
@@ -152,8 +154,27 @@
               </button>
             </div>
             <p class="field-note" data-i18n="orders.destination.hint">
-              Click a tile on the board to set a destination.
+              Click a tile to set a destination. Click an enemy to aim.
             </p>
+            <div id="order-plan" class="order-plan" aria-live="polite"></div>
+            <button id="preview-power" class="power-preview" data-i18n="orders.preview">
+              ✦ Preview power
+            </button>
+            <details class="advanced-orders">
+              <summary data-i18n="orders.advanced">Autopilot & equipment</summary>
+              <label class="field-label" for="equipment" data-i18n="orders.equipment"
+                >EQUIPMENT</label
+              ><select id="equipment"></select>
+              <p id="equipment-note" class="field-note"></p>
+              <div class="field-label" data-i18n="orders.tactic">TACTICAL PRIORITY</div>
+              <div id="tactics"></div>
+              <label class="field-label" for="target" data-i18n="orders.target"
+                >TARGET PRIORITY</label
+              ><select id="target">
+                <option value="nearest" data-i18n="orders.target.nearest">Nearest</option>
+                <option value="weakest" data-i18n="orders.target.weakest">Weakest</option>
+              </select>
+            </details>
             <div class="hero-tools">
               <button id="sheet-button">
                 <span data-i18n="orders.sheet">Character sheet</span> ↗</button

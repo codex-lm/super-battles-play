@@ -1,9 +1,9 @@
-The game ships with four heroes and one battlefield, and it is built to take yours. Everything below happens in the workshop, in your browser.
+The game ships with five heroes and one battlefield, and it is built to take yours. Everything below happens in the workshop, in your browser.
 
 ## Your character
 
 - Paste or open a sheet in Super Battles JSON, or in plain text or Markdown. A text sheet is kept word for word, and attributes written like "Agility d8" are picked up.
-- Then pick one of the four included heroes as a starting profile, which gives your hero that hero's power (kinetic field, piercing ray, repair nanites or super speed), and adjust its numbers within the game's limits: endurance 8 to 40, power 1 to 10, range 1 to 6, movement 1 to 6, armor 0 to 3, and a proficiency die from d4 to d12.
+- Then pick one of the five included heroes as a starting profile, which gives your hero that hero's power (kinetic field, piercing ray, repair nanites, super speed or interception), and adjust its numbers within the game's limits: endurance 8 to 40, power 1 to 10, range 1 to 6, movement 1 to 6, armor 0 to 3, and a proficiency die from d4 to d12.
 - Squads are set before round one. Your hero can be exported again as JSON or as a Markdown sheet.
 
 ## Your battlefield
