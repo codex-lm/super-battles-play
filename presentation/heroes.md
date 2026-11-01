@@ -1,8 +1,8 @@
 Four original heroes come with the game. By default, **Bastion and Volta** form the Azure squad and **Sillage and Suture** the Coral squad. Before round one, the workshop lets you swap any of them for another included hero or for your own character. Every hero rolls a d10 proficiency die.
 
-## Bastion, Guardian
+![Bastion miniature: a cyan and white armored hero holding a round shield](presentation/portraits/bastion.png) ![Volta miniature: a gold and white armored hero with lightning emblems and an arm cannon](presentation/portraits/volta.png) ![Suture miniature: a mint and white medic hero with cross emblems](presentation/portraits/suture.png) ![Sillage miniature: a coral and navy masked hero holding a curved blade](presentation/portraits/sillage.png)
 
-![Bastion miniature: a cyan and white armored hero holding a round shield](assets/bastion.png)
+## Bastion, Guardian
 
 *The last line of defense is always one step ahead.*
 
@@ -13,8 +13,6 @@ Four original heroes come with the game. By default, **Bastion and Volta** form 
 
 ## Volta, Striker
 
-![Volta miniature: a gold and white armored hero with lightning emblems and an arm cannon](assets/volta.png)
-
 *One spark can change everything.*
 
 **Piercing ray.** Her shots ignore 1 point of armor. Cover still makes her miss more often, and force fields and guard still protect the target.
@@ -24,8 +22,6 @@ Four original heroes come with the game. By default, **Bastion and Volta** form 
 
 ## Suture, Support
 
-![Suture miniature: a mint and white medic hero with cross emblems](assets/suture.png)
-
 *No one gets left behind.*
 
 **Repair nanites.** Uses the hero's action, at range 4 with line of sight: restores 4 endurance, or 6 on a great success. One attempt every two rounds. Heroes who are out of action cannot be brought back.
@@ -34,8 +30,6 @@ Four original heroes come with the game. By default, **Bastion and Volta** form 
 - Power 4, range 4, movement 3, armor 1
 
 ## Sillage, Scout
-
-![Sillage miniature: a coral and navy masked hero holding a curved blade](assets/sillage.png)
 
 *Already elsewhere. Already ahead.*
 
