@@ -3,6 +3,13 @@
   "description": "A tactical tabletop auto-battler for the browser. Equip four original superheroes, give each one a priority and a destination, then watch the round resolve with dice, cover, force fields, healing and speed. Hold the relays or defeat the other squad. Solo against the automaton, two players on one screen, or two players in a LOB7 room. Bring your own character sheet, battlefield or 3D miniature. English and French.",
   "entrypoint": "index.html",
   "cover": "cover.jpg",
+  "screenshots": [
+    "screenshots/01-round-in-action.jpg",
+    "screenshots/02-orders-and-powers.jpg",
+    "screenshots/03-repair-nanites.jpg",
+    "screenshots/04-battle-log.jpg",
+    "screenshots/05-battlefield-workshop.jpg"
+  ],
   "license": "MIT",
   "assetsLicense": "Code: MIT (LICENSE). Miniatures, power effects, portraits, sound effects and music: CC BY 4.0 (ASSETS-LICENSE), with the credits listed there.",
   "controls": [
@@ -29,5 +36,32 @@
   "multiplayer": {
     "mode": "room",
     "maxPlayers": 2
+  },
+  "presentation": {
+    "schemaVersion": 1,
+    "sections": [
+      {
+        "id": "how-to-play",
+        "title": "How to play",
+        "file": "presentation/how-to-play.md"
+      },
+      {
+        "id": "heroes",
+        "title": "The heroes",
+        "file": "presentation/heroes.md"
+      },
+      {
+        "id": "modes",
+        "title": "Ways to play",
+        "width": "half",
+        "file": "presentation/modes.md"
+      },
+      {
+        "id": "make-your-own",
+        "title": "Make it your own",
+        "width": "half",
+        "file": "presentation/make-your-own.md"
+      }
+    ]
   }
 }
